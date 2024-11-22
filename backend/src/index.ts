@@ -1,11 +1,12 @@
 import express from "express";
-import { createServer } from "http";
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import cors from "cors";
 
 const app = express();
-const server = app.listen(3000);
-const wss = new WebSocketServer({ server: server });
+const server = app.listen(3000, () => {
+  console.log("server started");
+});
+const wss = new WebSocketServer({ server });
 
 app.use(cors());
 
@@ -14,15 +15,12 @@ wss.on("connection", (ws) => {
     console.log(error);
   });
 
-  ws.on("message", (data) => {
+  ws.on("message", (data, isBinary) => {
+    console.log(data);
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(data);
+        client.send(data, { binary: isBinary });
       }
     });
   });
-});
-
-server.listen(3000, () => {
-  console.log("Server started");
 });

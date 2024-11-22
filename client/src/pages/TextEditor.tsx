@@ -1,16 +1,50 @@
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
+import { Connection } from "../components/Connection";
 
 export const TextEditor = () => {
   const { quill, quillRef } = useQuill();
-  // const isUpdatedProg = useRef(false);
+  const [socketCon, setSocketCon] = useState<null | WebSocket>(null);
 
-  quill?.on("text-change", (delta, oldDelta, source) => {
-    console.log(delta);
-  });
+  useEffect(() => {
+    const socket = new WebSocket("ws://localhost:3000");
+    socket.onopen = () => {
+      console.log("connected");
+      setSocketCon(socket);
+    };
 
-  useEffect(() => {}, [quill]);
+    socket.onerror = (error) => {
+      console.log(error);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (socketCon) {
+      socketCon.onmessage = (event) => {
+        const incomingMessage = event.data;
+        if (quill) {
+          quill.clipboard.dangerouslyPasteHTML(incomingMessage);
+        }
+      };
+    }
+  }, [quill, socketCon]);
+
+  useEffect(() => {
+    if (quill && socketCon) {
+      console.log(socketCon);
+      quill.on("text-change", (delta, oldData, source) => {
+        if (source === "user") {
+          const innerHtml = quill.root.innerHTML; // Get HTML content
+          socketCon.send(innerHtml); // Send HTML content to WebSocket server
+        }
+      });
+    }
+  }, [quill, socketCon]);
+
+  if (!socketCon) {
+    <Connection />;
+  }
 
   return (
     <div className="h-96 p-10">
