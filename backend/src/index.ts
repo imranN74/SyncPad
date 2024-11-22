@@ -1,23 +1,25 @@
 import express from "express";
-import { Server } from "socket.io";
 import { createServer } from "http";
+import { WebSocketServer } from "ws";
 import cors from "cors";
 
 const app = express();
-const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
-  },
-});
+const server = app.listen(3000);
+const wss = new WebSocketServer({ server: server });
 
 app.use(cors());
 
-io.on("connection", (socket) => {
-  console.log("a user connected");
-  socket.on("content", (data) => {
-    socket.broadcast.emit("recieve_content", data);
+wss.on("connection", (ws) => {
+  ws.on("error", (error) => {
+    console.log(error);
+  });
+
+  ws.on("message", (data) => {
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(data);
+      }
+    });
   });
 });
 
