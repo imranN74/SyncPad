@@ -23,8 +23,12 @@ export const TextEditor = () => {
     if (socketCon) {
       socketCon.onmessage = (event) => {
         const incomingMessage = event.data;
-        if (quill) {
+        if (quill && incomingMessage !== quill.root.innerHTML) {
+          const currentRange = quill.getSelection();
           quill.clipboard.dangerouslyPasteHTML(incomingMessage);
+          if (currentRange) {
+            quill.setSelection(currentRange);
+          }
         }
       };
     }
@@ -33,10 +37,10 @@ export const TextEditor = () => {
   useEffect(() => {
     if (quill && socketCon) {
       console.log(socketCon);
-      quill.on("text-change", (delta, oldData, source) => {
+      quill.on("text-change", (_, __, source) => {
         if (source === "user") {
-          const innerHtml = quill.root.innerHTML; // Get HTML content
-          socketCon.send(innerHtml); // Send HTML content to WebSocket server
+          const innerHtml = quill.root.innerHTML;
+          socketCon.send(innerHtml);
         }
       });
     }
