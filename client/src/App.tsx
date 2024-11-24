@@ -1,11 +1,12 @@
 import { TextEditor } from "./pages/TextEditor";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
   return (
     <>
-      <div>
-        <TextEditor />
-      </div>
+      <Routes>
+        <Route path="/:key" element={<TextEditor />} />
+      </Routes>
     </>
   );
 }

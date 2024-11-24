@@ -2,8 +2,11 @@ import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 import { useEffect, useState } from "react";
 import { Connection } from "../components/Connection";
+import { useParams } from "react-router-dom";
 
 export const TextEditor = () => {
+  const { key } = useParams();
+
   const { quill, quillRef } = useQuill();
   const [socketCon, setSocketCon] = useState<null | WebSocket>(null);
 
@@ -40,7 +43,8 @@ export const TextEditor = () => {
       quill.on("text-change", (_, __, source) => {
         if (source === "user") {
           const innerHtml = quill.root.innerHTML;
-          socketCon.send(innerHtml);
+          const urlKey = key;
+          socketCon.send(JSON.stringify({ urlKey, message: innerHtml }));
         }
       });
     }

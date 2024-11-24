@@ -1,6 +1,14 @@
 import express from "express";
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer } from "ws";
 import cors from "cors";
+import {
+  handleBroadcastMessage,
+  createContent,
+  updateContent,
+} from "./webSocket/eventHandler";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const app = express();
 const server = app.listen(3000, () => {
@@ -15,11 +23,14 @@ wss.on("connection", (ws) => {
     console.log(error);
   });
 
-  ws.on("message", (data, isBinary) => {
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(data, { binary: isBinary });
-      }
+  ws.on("message", async (data) => {
+    const incomingData = JSON.parse(data.toString());
+    const response = await prisma.content.findFirst({
+      where: {
+        urlKey: incomingData.urlKey,
+      },
     });
+    response ? updateContent(data.toString()) : createContent(data.toString());
+    handleBroadcastMessage(wss, data.toString());
   });
 });
