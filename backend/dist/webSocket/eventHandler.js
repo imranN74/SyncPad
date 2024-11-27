@@ -9,47 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createContent = exports.handleBroadcastMessage = void 0;
-exports.updateContent = updateContent;
+exports.handleBroadcastMessage = void 0;
 const ws_1 = require("ws");
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
-const handleBroadcastMessage = (wss, data) => __awaiter(void 0, void 0, void 0, function* () {
-    const messageData = JSON.parse(data);
-    const response = yield prisma.content.findMany({
-        where: {
-            urlKey: messageData.urlKey,
-        },
+const handleBroadcastMessage = (wss, ws) => __awaiter(void 0, void 0, void 0, function* () {
+    //on error
+    ws.on("error", (error) => {
+        console.log(error);
     });
-    wss.clients.forEach((client) => {
-        if (client.readyState === ws_1.WebSocket.OPEN) {
-            client.send(messageData.message);
-        }
+    //to boradcast message
+    ws.on("message", (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const messageData = JSON.parse(data.toString());
+        wss.clients.forEach((client) => {
+            if (client.readyState === ws_1.WebSocket.OPEN) {
+                client.send(messageData.message);
+            }
+        });
+    }));
+    //when server closes
+    ws.on("close", () => {
+        console.log("Client disconnected");
     });
 });
 exports.handleBroadcastMessage = handleBroadcastMessage;
-const createContent = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    const messageData = JSON.parse(data);
-    yield prisma.content.create({
-        data: {
-            urlKey: messageData.urlKey,
-            content: messageData.message,
-        },
-    });
-});
-exports.createContent = createContent;
-function updateContent(data) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const messageData = JSON.parse(data);
-        const currDate = new Date();
-        yield prisma.content.updateMany({
-            data: {
-                content: messageData.message,
-                updatedAt: currDate,
-            },
-            where: {
-                urlKey: messageData.urlKey,
-            },
-        });
-    });
-}

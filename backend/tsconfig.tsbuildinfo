@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/websocket/eventhandler.ts","./src/websocket/websocketserver.ts"],"version":"5.6.2"}
+{"root":["./src/index.ts","./src/websocket/eventhandler.ts"],"version":"5.6.2"}

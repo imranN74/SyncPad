@@ -1,46 +1,26 @@
 import { WebSocket, WebSocketServer } from "ws";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 export const handleBroadcastMessage = async (
   wss: WebSocketServer,
-  data: string
+  ws: WebSocket
 ) => {
-  const messageData = JSON.parse(data);
-  const response = await prisma.content.findMany({
-    where: {
-      urlKey: messageData.urlKey,
-    },
+  //on error
+  ws.on("error", (error) => {
+    console.log(error);
   });
 
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(messageData.message);
-    }
+  //to boradcast message
+  ws.on("message", async (data) => {
+    const messageData = JSON.parse(data.toString());
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(messageData.message);
+      }
+    });
+  });
+
+  //when server closes
+  ws.on("close", () => {
+    console.log("Client disconnected");
   });
 };
-
-export const createContent = async (data: string) => {
-  const messageData = JSON.parse(data);
-  await prisma.content.create({
-    data: {
-      urlKey: messageData.urlKey,
-      content: messageData.message,
-    },
-  });
-};
-
-export async function updateContent(data: string) {
-  const messageData = JSON.parse(data);
-  const currDate = new Date();
-  await prisma.content.updateMany({
-    data: {
-      content: messageData.message,
-      updatedAt: currDate,
-    },
-    where: {
-      urlKey: messageData.urlKey,
-    },
-  });
-}
