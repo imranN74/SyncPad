@@ -1,17 +1,20 @@
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Connection } from "../components/Connection";
+import { useRecoilState } from "recoil";
+import { WsConnectionAtom } from "../store/webSocketAtoms/atom";
 
 export const TextEditor = () => {
   const { quill, quillRef } = useQuill();
-  const [socketCon, setSocketCon] = useState<null | WebSocket>(null);
+  const [socketConnection, setsocketConnection] =
+    useRecoilState<null | WebSocket>(WsConnectionAtom);
 
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:3000");
     socket.onopen = () => {
       console.log("connected");
-      setSocketCon(socket);
+      setsocketConnection(socket);
     };
 
     socket.onerror = (error) => {
@@ -20,8 +23,8 @@ export const TextEditor = () => {
   }, []);
 
   useEffect(() => {
-    if (socketCon) {
-      socketCon.onmessage = (event) => {
+    if (socketConnection) {
+      socketConnection.onmessage = (event) => {
         const incomingMessage = event.data;
         if (quill && incomingMessage !== quill.root.innerHTML) {
           const currentRange = quill.getSelection();
@@ -32,22 +35,22 @@ export const TextEditor = () => {
         }
       };
     }
-  }, [quill, socketCon]);
+  }, [quill, socketConnection]);
 
   useEffect(() => {
-    if (quill && socketCon) {
-      console.log(socketCon);
+    if (quill && socketConnection) {
+      console.log(socketConnection);
       quill.on("text-change", (_, __, source) => {
         if (source === "user") {
           const innerHtml = quill.root.innerHTML;
-          socketCon.send(JSON.stringify({ message: innerHtml }));
+          socketConnection.send(JSON.stringify({ message: innerHtml }));
         }
       });
     }
-  }, [quill, socketCon]);
+  }, [quill, socketConnection]);
 
-  if (!socketCon) {
-    <Connection />;
+  if (!socketConnection) {
+    return <Connection />;
   }
 
   return (

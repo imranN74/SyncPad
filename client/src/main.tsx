@@ -5,12 +5,15 @@ import App from "./App.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-      <ToastContainer theme="colored" />
-    </BrowserRouter>
+    <RecoilRoot>
+      <BrowserRouter>
+        <App />
+        <ToastContainer theme="colored" />
+      </BrowserRouter>
+    </RecoilRoot>
   </StrictMode>
 );

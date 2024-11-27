@@ -14,7 +14,8 @@
     "react-dom": "^18.3.1",
     "react-quilljs": "^2.0.4",
     "react-router-dom": "^7.0.1",
-    "react-toastify": "^10.0.6"
+    "react-toastify": "^10.0.6",
+    "recoil": "^0.7.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
