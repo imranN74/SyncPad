@@ -24,6 +24,7 @@ wss.on("connection", (ws) => {
   });
 
   ws.on("message", async (data) => {
+    handleBroadcastMessage(wss, data.toString());
     const incomingData = JSON.parse(data.toString());
     const response = await prisma.content.findFirst({
       where: {
@@ -31,6 +32,5 @@ wss.on("connection", (ws) => {
       },
     });
     response ? updateContent(data.toString()) : createContent(data.toString());
-    handleBroadcastMessage(wss, data.toString());
   });
 });
