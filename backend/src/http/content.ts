@@ -1,35 +1,13 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { statusCode } from "..";
+import { createContent, updateContent } from "./handleContent";
 
 const router = Router();
 const prisma = new PrismaClient();
 
-//create content
-router.post("/create", async (req: Request, res: Response) => {
-  const { content, key } = req.body;
-  try {
-    if (!key) {
-      res.status(statusCode.badRequest).json({
-        message: "url unique key is missing",
-      });
-    }
-    await prisma.content.create({
-      data: {
-        urlKey: key,
-        content: content,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(statusCode.serverError).json({
-      message: "error while syncing data",
-    });
-  }
-});
-
-//update content
-router.post("/update/:key", async (req: Request, res: Response) => {
+//handle content
+router.post("/content/:key", async (req: Request, res: Response) => {
   const urlKey = req.params.key;
   const { content } = req.body;
   try {
@@ -38,22 +16,21 @@ router.post("/update/:key", async (req: Request, res: Response) => {
         message: "url unique key is missing",
       });
     }
-
-    const currDataTime = new Date();
-
-    await prisma.content.updateMany({
-      data: {
-        content: content,
-        updatedAt: currDataTime,
-      },
+    const response = await prisma.content.findFirst({
       where: {
         urlKey: urlKey,
       },
     });
+
+    if (response) {
+      updateContent(urlKey, content);
+    } else {
+      createContent(urlKey, content);
+    }
   } catch (error) {
     console.log(error);
     res.status(statusCode.serverError).json({
-      message: "error syncing data",
+      message: "error while syncing data",
     });
   }
 });
