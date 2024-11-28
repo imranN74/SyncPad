@@ -7,7 +7,7 @@ const router = Router();
 const prisma = new PrismaClient();
 
 //handle content
-router.post("/content/:key", async (req: Request, res: Response) => {
+router.post("/handle/:key", async (req: Request, res: Response) => {
   const urlKey = req.params.key;
   const { content } = req.body;
   try {
@@ -15,6 +15,7 @@ router.post("/content/:key", async (req: Request, res: Response) => {
       res.status(statusCode.badRequest).json({
         message: "url unique key is missing",
       });
+      return;
     }
     const response = await prisma.content.findFirst({
       where: {
@@ -24,8 +25,12 @@ router.post("/content/:key", async (req: Request, res: Response) => {
 
     if (response) {
       updateContent(urlKey, content);
+      res.status(statusCode.accepted);
+      return;
     } else {
       createContent(urlKey, content);
+      res.status(statusCode.created);
+      return;
     }
   } catch (error) {
     console.log(error);
@@ -49,9 +54,19 @@ router.get("/:key", async (req: Request, res: Response) => {
       take: 1,
     });
 
+    if (response.length === 0) {
+      const content = "";
+      const response = createContent(urlKey, content);
+      res.status(statusCode.accepted).json({
+        response,
+      });
+      return;
+    }
+
     res.status(statusCode.accepted).json({
       response,
     });
+    return;
   } catch (error) {
     console.log(error);
     res.status(statusCode.serverError).json({

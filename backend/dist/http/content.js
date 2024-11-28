@@ -16,7 +16,7 @@ const handleContent_1 = require("./handleContent");
 const router = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
 //handle content
-router.post("/content/:key", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/handle/:key", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const urlKey = req.params.key;
     const { content } = req.body;
     try {
@@ -24,6 +24,7 @@ router.post("/content/:key", (req, res) => __awaiter(void 0, void 0, void 0, fun
             res.status(__1.statusCode.badRequest).json({
                 message: "url unique key is missing",
             });
+            return;
         }
         const response = yield prisma.content.findFirst({
             where: {
@@ -32,9 +33,13 @@ router.post("/content/:key", (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
         if (response) {
             (0, handleContent_1.updateContent)(urlKey, content);
+            res.status(__1.statusCode.accepted);
+            return;
         }
         else {
             (0, handleContent_1.createContent)(urlKey, content);
+            res.status(__1.statusCode.created);
+            return;
         }
     }
     catch (error) {
@@ -57,9 +62,18 @@ router.get("/:key", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             },
             take: 1,
         });
+        if (response.length === 0) {
+            const content = "";
+            const response = (0, handleContent_1.createContent)(urlKey, content);
+            res.status(__1.statusCode.accepted).json({
+                response,
+            });
+            return;
+        }
         res.status(__1.statusCode.accepted).json({
             response,
         });
+        return;
     }
     catch (error) {
         console.log(error);

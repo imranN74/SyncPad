@@ -20,6 +20,7 @@ exports.statusCode = {
     accepted: 202,
 };
 const app = (0, express_1.default)();
+app.use(express_1.default.json());
 const server = app.listen(3000, () => {
     console.log("server started");
 });

@@ -4,8 +4,13 @@ import { useEffect } from "react";
 import { Connection } from "../components/Connection";
 import { useRecoilState } from "recoil";
 import { WsConnectionAtom } from "../store/webSocketAtoms/atom";
+import { usefetchData } from "../hooks/fetchData";
+import { useParams } from "react-router-dom";
+import { useHandleContent } from "../hooks/handleContent";
 
 export const TextEditor = () => {
+  const { key } = useParams();
+
   const { quill, quillRef } = useQuill();
   const [socketConnection, setsocketConnection] =
     useRecoilState<null | WebSocket>(WsConnectionAtom);
@@ -15,6 +20,10 @@ export const TextEditor = () => {
     socket.onopen = () => {
       console.log("connected");
       setsocketConnection(socket);
+      const randomKey = "";
+      usefetchData(key ?? randomKey).then((content) => {
+        quill?.clipboard.dangerouslyPasteHTML(content);
+      });
     };
 
     socket.onerror = (error) => {
@@ -39,11 +48,12 @@ export const TextEditor = () => {
 
   useEffect(() => {
     if (quill && socketConnection) {
-      console.log(socketConnection);
       quill.on("text-change", (_, __, source) => {
         if (source === "user") {
           const innerHtml = quill.root.innerHTML;
+
           socketConnection.send(JSON.stringify({ message: innerHtml }));
+          useHandleContent(key ?? "", innerHtml);
         }
       });
     }

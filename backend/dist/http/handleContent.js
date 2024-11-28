@@ -13,12 +13,13 @@ exports.updateContent = exports.createContent = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const createContent = (urlKey, content) => __awaiter(void 0, void 0, void 0, function* () {
-    yield prisma.content.create({
+    const response = yield prisma.content.create({
         data: {
             urlKey: urlKey,
             content: content,
         },
     });
+    return response;
 });
 exports.createContent = createContent;
 const updateContent = (urlKey, content) => __awaiter(void 0, void 0, void 0, function* () {
@@ -32,5 +33,6 @@ const updateContent = (urlKey, content) => __awaiter(void 0, void 0, void 0, fun
             updatedAt: currDataTime,
         },
     });
+    return;
 });
 exports.updateContent = updateContent;
