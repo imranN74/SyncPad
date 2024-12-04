@@ -12,6 +12,8 @@ export const handleBroadcastMessage = async (
   //to boradcast message
   ws.on("message", async (data) => {
     const messageData = JSON.parse(data.toString());
+    const roomId = messageData.urlKey;
+    const message = messageData.message;
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(messageData.message);

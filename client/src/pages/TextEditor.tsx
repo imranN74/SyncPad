@@ -60,7 +60,9 @@ export const TextEditor = () => {
         if (source === "user") {
           const innerHtml = quill.root.innerHTML;
 
-          socketConnection.send(JSON.stringify({ message: innerHtml }));
+          socketConnection.send(
+            JSON.stringify({ urlKey: key, message: innerHtml })
+          );
           debouncedHandleContent(key ?? "", innerHtml);
         }
       });

@@ -19,6 +19,9 @@ const handleBroadcastMessage = (wss, ws) => __awaiter(void 0, void 0, void 0, fu
     //to boradcast message
     ws.on("message", (data) => __awaiter(void 0, void 0, void 0, function* () {
         const messageData = JSON.parse(data.toString());
+        const roomId = messageData.urlKey;
+        const message = messageData.message;
+        console.log(roomId, message);
         wss.clients.forEach((client) => {
             if (client.readyState === ws_1.WebSocket.OPEN) {
                 client.send(messageData.message);
