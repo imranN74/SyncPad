@@ -1,13 +1,19 @@
-import { TextEditor } from "./pages/TextEditor";
+import { MainPage } from "./pages/MainPage";
 import { Route, Routes } from "react-router-dom";
+import { Navbar } from "./components/Navbar";
+import { Footer } from "./components/Footer";
 
 function App() {
   return (
-    <>
-      <Routes>
-        <Route path="/:key" element={<TextEditor />} />
-      </Routes>
-    </>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <div className="flex grow">
+        <Routes>
+          <Route path="/:key" element={<MainPage />} />
+        </Routes>
+      </div>
+      <Footer />
+    </div>
   );
 }
 

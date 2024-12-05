@@ -1,7 +1,7 @@
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 import { useEffect, useCallback } from "react";
-import { Connection } from "../components/Connection";
+import { Connection } from "./Connection";
 import { useRecoilState } from "recoil";
 import { WsConnectionAtom } from "../store/webSocketAtoms/atom";
 import { usefetchData } from "../hooks/fetchData";
@@ -74,7 +74,7 @@ export const TextEditor = () => {
   }
 
   return (
-    <div className="h-96 p-10">
+    <div className="h-96 mx-3 md:h-80 md:mx-10 my-2">
       <div ref={quillRef} />
     </div>
   );
