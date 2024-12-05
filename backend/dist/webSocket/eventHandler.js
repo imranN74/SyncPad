@@ -10,7 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleBroadcastMessage = void 0;
+exports.handleRoom = handleRoom;
 const ws_1 = require("ws");
+// room logics
+const rooms = {};
+function handleRoom(roomId, ws) {
+    if (!rooms[roomId]) {
+        rooms[roomId] = new Set();
+    }
+    rooms[roomId].add(ws);
+}
 const handleBroadcastMessage = (wss, ws) => __awaiter(void 0, void 0, void 0, function* () {
     //on error
     ws.on("error", (error) => {
@@ -21,10 +30,9 @@ const handleBroadcastMessage = (wss, ws) => __awaiter(void 0, void 0, void 0, fu
         const messageData = JSON.parse(data.toString());
         const roomId = messageData.urlKey;
         const message = messageData.message;
-        console.log(roomId, message);
-        wss.clients.forEach((client) => {
+        rooms[roomId].forEach((client) => {
             if (client.readyState === ws_1.WebSocket.OPEN) {
-                client.send(messageData.message);
+                client.send(message);
             }
         });
     }));
