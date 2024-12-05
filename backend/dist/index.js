@@ -31,9 +31,15 @@ app.use((0, cors_1.default)());
 wss.on("connection", (ws, req) => {
     const parsedKey = req.url ? url_1.default.parse(req.url, true) : null;
     const urlKey = parsedKey === null || parsedKey === void 0 ? void 0 : parsedKey.query.roomId;
-    const roomId = urlKey ? urlKey[0] : "xyz";
+    // const roomId = urlKey ? urlKey : "xyz";
+    // console.log(roomId);
     //handle room creation
-    (0, eventHandler_1.handleRoom)(roomId, ws);
+    if (typeof urlKey === "string") {
+        (0, eventHandler_1.handleRoom)(urlKey, ws);
+    }
+    else {
+        console.log("inavlid roomId");
+    }
     //handle data broadcasting
     (0, eventHandler_1.handleBroadcastMessage)(wss, ws);
 });

@@ -7,7 +7,6 @@ export function handleRoom(roomId: string, ws: WebSocket) {
     rooms[roomId] = new Set();
   }
   rooms[roomId].add(ws);
-  console.log(rooms[roomId]);
 }
 
 export const handleBroadcastMessage = async (
