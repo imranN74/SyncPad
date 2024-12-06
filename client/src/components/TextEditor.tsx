@@ -74,7 +74,7 @@ export const TextEditor = () => {
   }
 
   return (
-    <div className="h-96 mx-3 md:h-80 md:mx-10 my-2">
+    <div className="h-96 mx-3 md:h-80 md:mx-5 my-2">
       <div ref={quillRef} />
     </div>
   );
