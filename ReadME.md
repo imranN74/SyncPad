@@ -71,7 +71,7 @@ CREATE DATABASE syncpad;
 - Migrate Schema
 
 ```bash
-npx prisma migrate
+npx prisma migrate dev
 ```
 
 3. **Start the server** :
