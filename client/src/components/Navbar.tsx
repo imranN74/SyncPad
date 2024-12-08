@@ -5,12 +5,15 @@ export const Navbar = () => {
     <div className="flex justify-between px-5 md:px-10 py-5 border-b-2 bg-red-100">
       <Logo />
       <div>
-        <ul className="flex gap-5">
+        <ul className="flex gap-7 font-semibold">
           <li>
-            <a>Create Room</a>
+            <a className="text-red-500 cursor-pointer hover:underline">New</a>
           </li>
           <li>
-            <a>About Us</a>
+            <a className="cursor-pointer hover:underline">About Us</a>
+          </li>
+          <li>
+            <a className="cursor-pointer hover:underline">Contact Us</a>
           </li>
         </ul>
       </div>
