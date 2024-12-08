@@ -26,8 +26,6 @@
 
 - Changes made by one user are instantly reflected for all participants in the room.
 
-## Frontend :
-
 ### **Installation**
 
 To get started with this project, you'll need to have **Node.js** and **npm** (or **yarn**) installed.
@@ -38,32 +36,6 @@ To get started with this project, you'll need to have **Node.js** and **npm** (o
 ```bash
  git clone https://github.com/imranN74/SyncPad.git
  cd client
-```
-
-2. **Installing Dependencies**:
-   Once you're inside the project directory, install the dependencies by running:
-
-```bash
-npm install
-```
-
-Or, if you're using **yarn**:
-
-```bash
-yarn install
-```
-
-3. **Start the app**:
-   Run the app locally using the following command:
-
-```bash
-npm run dev
-```
-
-Or, if you're using **yarn**:
-
-```bash
-yarn dev
 ```
 
 ## Backend
@@ -113,3 +85,33 @@ Or, if you prefer **yarn**:
 ```bash
 yarn dev
 ```
+
+## Frontend :
+
+2. **Installing Dependencies**:
+   Once you're inside the project directory, install the dependencies by running:
+
+```bash
+npm install
+```
+
+Or, if you're using **yarn**:
+
+```bash
+yarn install
+```
+
+3. **Start the app**:
+   Run the app locally using the following command:
+
+```bash
+npm run dev
+```
+
+Or, if you're using **yarn**:
+
+```bash
+yarn dev
+```
+
+**Navigate to** http://localhost:5173
