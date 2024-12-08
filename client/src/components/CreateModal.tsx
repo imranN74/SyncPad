@@ -33,6 +33,7 @@ export const CreateModal: React.FC<{ visiblity: boolean }> = ({
       >
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div className="text-center py-2 font-bold">Create New Pad</div>
             <button
               onClick={() => {
                 window.location.reload();
@@ -65,9 +66,10 @@ export const CreateModal: React.FC<{ visiblity: boolean }> = ({
                 onChange={handleKeyChange}
                 id="first_name"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="John"
+                placeholder="my_pad"
                 required
               />
+              <span>Don't use space</span>
             </div>
             <div className="p-4 md:p-5 text-center flex flex-col gap-2">
               <button
