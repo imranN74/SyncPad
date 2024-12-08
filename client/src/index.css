@@ -5,3 +5,11 @@
 .logoFont {
   font-family: cursive;
 }
+
+.ql-container {
+  border: 1px solid black !important;
+}
+
+.ql-editor {
+  border: 1 xp solid !important; /* Remove the inner border if necessary */
+}

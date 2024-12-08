@@ -7,7 +7,7 @@ export const Info = () => {
   return (
     <div className="flex gap-3 justify-around items-center">
       <div className="flex gap-3 justify-around">
-        <div className="font-normal">Your Room ID :</div>
+        <div className="font-normal">SyncPad ID :</div>
         <div className="font-bold">{key}</div>
       </div>
       <div>
