@@ -6,10 +6,13 @@
   font-family: cursive;
 }
 
-.ql-container {
-  border: 1px solid black !important;
+.ql-editor {
+  border: 2px solid black !important;
+  background-color: rgb(244, 243, 243);
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px;
 }
 
-.ql-editor {
-  border: 1 xp solid !important; /* Remove the inner border if necessary */
+.ql-toolbar {
+  border: 1px solid !important;
 }

@@ -17,9 +17,7 @@ export const Navbar = () => {
           >
             <a className="text-red-500 cursor-pointer hover:underline">New</a>
           </li>
-          <li>
-            <a className="cursor-pointer hover:underline">About Us</a>
-          </li>
+
           <li>
             <a className="cursor-pointer hover:underline">Contact Us</a>
           </li>
