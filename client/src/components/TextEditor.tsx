@@ -24,7 +24,9 @@ export const TextEditor = () => {
   );
 
   useEffect(() => {
-    const socket = new WebSocket(`ws://localhost:3000?roomId=${key}`);
+    const socket = new WebSocket(
+      `wss://syncpad-jlau.onrender.com?roomId=${key}`
+    );
     socket.onopen = () => {
       console.log("connected");
       setsocketConnection(socket);
