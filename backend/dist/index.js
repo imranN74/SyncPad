@@ -10,6 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 const eventHandler_1 = require("./webSocket/eventHandler");
 const content_1 = __importDefault(require("./http/content"));
 const url_1 = __importDefault(require("url"));
+const PORT = process.env.PORT || 3000;
 exports.statusCode = {
     notFound: 404,
     notAuthorized: 401,
@@ -22,7 +23,7 @@ exports.statusCode = {
 };
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-const server = app.listen(3000, () => {
+const server = app.listen(PORT, () => {
     console.log("server started");
 });
 const wss = new ws_1.WebSocketServer({ server });
