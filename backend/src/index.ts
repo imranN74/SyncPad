@@ -5,6 +5,8 @@ import { handleBroadcastMessage, handleRoom } from "./webSocket/eventHandler";
 import contentRouter from "./http/content";
 import url from "url";
 
+const PORT = process.env.PORT || 3000;
+
 export const statusCode = {
   notFound: 404,
   notAuthorized: 401,
@@ -18,7 +20,7 @@ export const statusCode = {
 
 const app = express();
 app.use(express.json());
-const server = app.listen(3000, () => {
+const server = app.listen(PORT, () => {
   console.log("server started");
 });
 const wss = new WebSocketServer({ server });
