@@ -1,4 +1,5 @@
 import { useQuill } from "react-quilljs";
+import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { useEffect, useCallback } from "react";
 import { Connection } from "./Connection";
@@ -8,6 +9,7 @@ import { usefetchData } from "../hooks/fetchData";
 import { useParams } from "react-router-dom";
 import { useHandleContent } from "../hooks/handleContent";
 import { debounce } from "lodash";
+import { useSendMessage } from "../hooks/sendMessage";
 
 export const TextEditor = () => {
   const { key } = useParams();
@@ -20,8 +22,14 @@ export const TextEditor = () => {
     debounce(async (key: string, content: string) => {
       await useHandleContent(key, content);
     }, 1000),
-    [] // Empty dependencies ensure the function is created once
+    []
   );
+
+  const debounceSendMessage = useCallback(() => {
+    debounce((quill: Quill, socketConnection: WebSocket) => {
+      useSendMessage(quill, socketConnection);
+    }, 200);
+  }, []);
 
   useEffect(() => {
     const socket = new WebSocket(
@@ -42,19 +50,22 @@ export const TextEditor = () => {
   }, [quill]);
 
   useEffect(() => {
-    if (socketConnection) {
-      socketConnection.onmessage = (event) => {
-        const incomingMessage = event.data;
-        if (quill && incomingMessage !== quill.root.innerHTML) {
-          const currentRange = quill.getSelection();
-          quill.clipboard.dangerouslyPasteHTML(incomingMessage);
-          if (currentRange) {
-            quill.setSelection(currentRange);
-          }
-        }
-      };
-    }
+    debounceSendMessage();
   }, [quill, socketConnection]);
+  // useEffect(() => {
+  //   if (socketConnection) {
+  //     socketConnection.onmessage = (event) => {
+  //       const incomingMessage = event.data;
+  //       if (quill && incomingMessage !== quill.root.innerHTML) {
+  //         const currentRange = quill.getSelection();
+  //         quill.clipboard.dangerouslyPasteHTML(incomingMessage);
+  //         if (currentRange) {
+  //           quill.setSelection(currentRange);
+  //         }
+  //       }
+  //     };
+  //   }
+  // }, [quill, socketConnection]);
 
   useEffect(() => {
     if (quill && socketConnection) {
@@ -72,7 +83,11 @@ export const TextEditor = () => {
   }, [quill, socketConnection]);
 
   if (!socketConnection) {
-    return <Connection />;
+    return (
+      <div className="flex justify-center mt-5">
+        <Connection />
+      </div>
+    );
   }
 
   return (
