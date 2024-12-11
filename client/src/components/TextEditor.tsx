@@ -1,15 +1,13 @@
 import { useQuill } from "react-quilljs";
-import Quill from "quill";
 import "quill/dist/quill.snow.css";
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { Connection } from "./Connection";
 import { useRecoilState } from "recoil";
 import { WsConnectionAtom } from "../store/webSocketAtoms/atom";
 import { usefetchData } from "../hooks/fetchData";
 import { useParams } from "react-router-dom";
-import { useHandleContent } from "../hooks/handleContent";
-import { debounce } from "lodash";
-import { useSendMessage } from "../hooks/sendMessage";
+import { useDebounceContent } from "../hooks/handleContent";
+import { useDebounceMessage } from "../hooks/sendMessage";
 
 export const TextEditor = () => {
   const { key } = useParams();
@@ -18,18 +16,12 @@ export const TextEditor = () => {
   const [socketConnection, setsocketConnection] =
     useRecoilState<null | WebSocket>(WsConnectionAtom);
 
-  const debouncedHandleContent = useCallback(
-    debounce(async (key: string, content: string) => {
-      await useHandleContent(key, content);
-    }, 1000),
-    []
+  const debouncedHandleContent = useDebounceContent();
+  const debounceSendMessage = useDebounceMessage(
+    key ?? "",
+    quill,
+    socketConnection
   );
-
-  const debounceSendMessage = useCallback(() => {
-    debounce((quill: Quill, socketConnection: WebSocket) => {
-      useSendMessage(quill, socketConnection);
-    }, 200);
-  }, []);
 
   useEffect(() => {
     const socket = new WebSocket(
@@ -50,22 +42,19 @@ export const TextEditor = () => {
   }, [quill]);
 
   useEffect(() => {
-    debounceSendMessage();
+    if (socketConnection) {
+      socketConnection.onmessage = (event) => {
+        const incomingMessage = event.data;
+        if (quill && incomingMessage !== quill.root.innerHTML) {
+          const currentRange = quill.getSelection();
+          quill.clipboard.dangerouslyPasteHTML(incomingMessage);
+          if (currentRange) {
+            quill.setSelection(currentRange);
+          }
+        }
+      };
+    }
   }, [quill, socketConnection]);
-  // useEffect(() => {
-  //   if (socketConnection) {
-  //     socketConnection.onmessage = (event) => {
-  //       const incomingMessage = event.data;
-  //       if (quill && incomingMessage !== quill.root.innerHTML) {
-  //         const currentRange = quill.getSelection();
-  //         quill.clipboard.dangerouslyPasteHTML(incomingMessage);
-  //         if (currentRange) {
-  //           quill.setSelection(currentRange);
-  //         }
-  //       }
-  //     };
-  //   }
-  // }, [quill, socketConnection]);
 
   useEffect(() => {
     if (quill && socketConnection) {
@@ -73,9 +62,7 @@ export const TextEditor = () => {
         if (source === "user") {
           const innerHtml = quill.root.innerHTML;
 
-          socketConnection.send(
-            JSON.stringify({ urlKey: key, message: innerHtml })
-          );
+          debounceSendMessage(innerHtml);
           debouncedHandleContent(key ?? "", innerHtml);
         }
       });

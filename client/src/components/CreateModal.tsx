@@ -91,7 +91,7 @@ export const CreateModal: React.FC<{ visiblity: boolean }> = ({
               />
               <span>Don't use space</span>
             </div>
-            <div className="p-4 md:p-5 text-center flex flex-col gap-2">
+            <div className="p-4 md:p-5 flex justify-center gap-2">
               <button
                 onClick={() => {
                   navigate(`/${keyValue}`);
