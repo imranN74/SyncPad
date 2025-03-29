@@ -17,7 +17,8 @@
     "react-quilljs": "^2.0.4",
     "react-router-dom": "^7.0.1",
     "react-toastify": "^10.0.6",
-    "recoil": "^0.7.7"
+    "recoil": "^0.7.7",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
